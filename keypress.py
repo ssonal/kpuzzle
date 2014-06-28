@@ -9,12 +9,17 @@ except ImportError:
 
     import msvcrt
 
-    UP, DOWN, RIGHT, LEFT = 119, 115, 100, 97
+    UP, UP1, DOWN, DOWN1, RIGHT, RIGHT1, LEFT, LEFT1 = 119, 72, 115, 80, 100, 77, 97,75
+
+    # arrow keys: 72,80,77,75 
 
     def getKey():
         while True:
             if msvcrt.kbhit():
                 a = ord(msvcrt.getch())
+                if a == 224:
+                    a = ord(msvcrt.getch())
+
                 return a
 
 else:
@@ -66,3 +71,9 @@ else:
 
 # legacy support
 getArrowKey = getKey
+
+
+
+if __name__ == "__main__":
+    while(True):
+        print getKey()

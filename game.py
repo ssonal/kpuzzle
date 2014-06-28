@@ -12,7 +12,7 @@ class Game(object):
 
 	__clear = 'cls' if os.name == 'nt' else 'clear'
 
-	def __init__(self, mode='user',size=4, clear_screen=True,**kws):
+	def __init__(self, mode='user',size=4, clear_screen=False,**kws):
 		self.board = Board(size, **kws)
 		self.score = 0
 		self.clear_screen = clear_screen
@@ -46,8 +46,8 @@ class Game(object):
 
 	        print('You won!' if self.board.won() else 'Game Over')
 	        return self.score
-	  #   else:
-			# self.ai()
+	    else:
+			self.ai()
 
 
 	def ai(self):
