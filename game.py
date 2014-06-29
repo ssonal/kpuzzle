@@ -14,8 +14,8 @@ class Game(object):
 
 	__clear = 'cls' if os.name == 'nt' else 'clear'
 
-	def __init__(self, mode='user',size=3, clear_screen=True,**kws):
-		self.board = Board(size, **kws)
+	def __init__(self,count=34, mode='user',size=3, clear_screen=True,**kws):
+		self.board = Board(size,count, **kws)
 		self.score = 0
 		self.clear_screen = clear_screen
 		self.mode = mode
@@ -54,10 +54,6 @@ class Game(object):
 
 	        print('You won!' if self.board.won() else 'Game Over')
 	        return self.score
-	  #   else:
-			# self.ai()
-			# return 0
-
 
 	def ai(self):
 		try:
@@ -68,38 +64,43 @@ class Game(object):
 				print('\n')
 
 			print(self)
-			queue = PriorityQueue()
-			moves = self.bfs(copy.deepcopy(self.board),queue)
+			moves = self.astar(copy.deepcopy(self.board))
 			print (moves)
 		except TypeError:
 			return 0
-		# pass
 
 
-	def bfs(self, puzzle,queue,priority = 0):
-		print(puzzle)
-		# a = input( ' ')
-		# queue = PriorityQueue()
-		t = puzzle.won()
-		if puzzle.getSoln() == puzzle:
-			return ' '
-		else:
-			moves = puzzle.getMoves()
-			print (moves)
-			for move in moves:
-				queue.push((puzzle.board,move),priority)
+	def astar(self,puzzle):
+		queue = PriorityQueue()
+		priority = 0
+		currentmoves = []
+		counter = 0
+		while True:
+			# print(puzzle)
+			if puzzle.won():
+				print (counter)
+				return currentmoves
+			else:
+				# print (priority)
+				counter += 1
+				moves = puzzle.getMoves()
 
-			p1 = copy.deepcopy(puzzle)
-			b,m = queue.pop()
-			# print(b)
-			# print(m)
-			raw_input(' ')
-			p1.board = b
-			p1.makeMove(m)
-			priority+=1
-			return str(move)+' '+self.bfs(p1,queue,priority) 
+				for move in moves:
+					p1 = copy.deepcopy(puzzle)
+					c = copy.deepcopy(currentmoves)
+					p1.makeMove(move)
+					c.append(move)
+					p = priority
+					p += manhattanDistance(p1)+misplaced(p1)
+					queue.push((p1,c,p),p)
 
+				b,m,p = queue.pop()
+				puzzle = b
+				currentmoves = m
 
+				priority = p
+
+				# raw_input(' ')
 
 	def __str__(self):
 		s1 = '\n\n\n'+str(self.board)+'\nScore:'+str(self.score)+'\n'
@@ -108,6 +109,3 @@ class Game(object):
 if __name__=='__main__':
 	g = Game(mode='ai')
 	g.gameLoop()
-	# print (g)
-	# print (manhattanDistance(g.getBoard()))
-	# print ('misplaced:%d' %	misplaced(g.getBoard()))

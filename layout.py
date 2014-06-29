@@ -1,10 +1,11 @@
 from __future__ import print_function
-from random import randint
+from random import randint,sample
 from copy import deepcopy
 import keypress
 
-class Board(object):
 
+
+class Board(object):
 
 	#map for directions of movement
 	__dirs = {
@@ -22,9 +23,12 @@ class Board(object):
       # 3   4
       #   2
 
-	def __init__(self,size=3,other=None, **kws):
+	def __init__(self,size=3,count=34,other=None, **kws):
 		self.size = size
-		self.board, self.space, self.solution = self.getNewBoard()
+		self.board = {}
+		self.space = ()
+		self.count = count
+		self.solution = self.getNewBoard()
 		if other:
 			self.dict = deepcopy(other.__dict__)
 
@@ -44,61 +48,19 @@ class Board(object):
 				b[i,j] = nums[k]
 				k+=1
 
-		board = self.shuffle(deepcopy(nums))
-		while(True):
+		self.board = deepcopy(b)
+		self.space = (self.size-1, self.size-1)
+		self.shuffle()
+		return b
 
-			if self.solvable(board):
-				break
-			board = self.shuffle(deepcopy(nums))
+	def shuffle(self):
 
-		board, space = self.makeboard(board)
-
-		return board, space, b
-
-	def shuffle(self, nums):
-		for i in range(self.size**2):
-
-
-
-			ul = min(i+3,(self.size**2)-1)
-
-			r = randint(i,ul)
-			temp = nums[i]
-			nums[i] = nums[r]
-			nums[r] = temp
-
-		return nums
-	
-	def makeboard(self, nums):
-		b = {}
-		k=0
-		space = None
-		for i in range(self.size):
-			for j in range(self.size):
-				b[i,j]=nums[k]
-				if nums[k]==0:
-					space = (i,j)
-				k += 1
-
-		return b, space
-
-	def solvable(self, board):
-		inv = 0
-		for i in range((self.size**2)-1):
-			if board[i] == 0:
-				continue
-			else:
-				m = [board[x] for x in range(i+1, (self.size**2)) if ((board[x] < board[i]) and (not board[x] == 0))]
-				inv += len(m)
-
-
-		oddWidth = self.size % 2 == 1
-		evenInv = inv % 2 == 0
-		space = [(x,y) for x,y in enumerate(board) if y == 0][0][0]
-		space = space / self.size
-		blankOnOddRow = (self.size-space) % 2 == 1
-		return (oddWidth and evenInv) or (not oddWidth and (blankOnOddRow == evenInv))
-
+		for _ in range(self.count):
+			valid_moves = self.getMoves()
+			# print(valid_moves)
+			move = sample(valid_moves, 1)[0]
+			# print (move)
+			self.makeMove(move)
 
 	def makeMove(self,dire):
 		direction = self.__dirs.get(dire)
@@ -167,9 +129,8 @@ class Board(object):
 		# print ("111"+self.solution)
 		return st
 
-
 if __name__ == "__main__":
 	b = Board()
 	b.getBoard()
-	b.makeMove(119)
+	b.makeMove(77)
 	b.getBoard()
