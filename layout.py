@@ -1,9 +1,9 @@
 from __future__ import print_function
-from random import randint,sample
+from random import randint,sample,seed
 from copy import deepcopy
 import keypress
 
-
+# seed(10299)
 
 class Board(object):
 

@@ -14,7 +14,7 @@ class Game(object):
 
 	__clear = 'cls' if os.name == 'nt' else 'clear'
 
-	def __init__(self,count=34, mode='user',size=3, clear_screen=True,**kws):
+	def __init__(self,count=85, mode='user',size=4, clear_screen=True,**kws):
 		self.board = Board(size,count, **kws)
 		self.score = 0
 		self.clear_screen = clear_screen
@@ -66,15 +66,25 @@ class Game(object):
 			print(self)
 			moves = self.astar(copy.deepcopy(self.board))
 			print (moves)
+			print (len(moves))
+
+			for move in moves:
+				self.board.makeMove(move)
+
+				self.score += 1
+				print(self)
+				raw_input(' ')
 		except TypeError:
 			return 0
 
+		print ('You won!')
 
 	def astar(self,puzzle):
 		queue = PriorityQueue()
 		priority = 0
 		currentmoves = []
 		counter = 0
+		parentBoard = None
 		while True:
 			# print(puzzle)
 			if puzzle.won():
@@ -82,18 +92,21 @@ class Game(object):
 				return currentmoves
 			else:
 				# print (priority)
-				counter += 1
 				moves = puzzle.getMoves()
 
 				for move in moves:
 					p1 = copy.deepcopy(puzzle)
 					c = copy.deepcopy(currentmoves)
 					p1.makeMove(move)
+					if p1.board == parentBoard:
+						continue
 					c.append(move)
-					p = priority
-					p += manhattanDistance(p1)+misplaced(p1)
+					p = len(currentmoves)
+					p += manhattanDistance(p1)+hammingDistance(p1)#linearConflict(p1)
 					queue.push((p1,c,p),p)
 
+				counter += 1
+				parentBoard = copy.deepcopy(puzzle.board)
 				b,m,p = queue.pop()
 				puzzle = b
 				currentmoves = m
@@ -107,5 +120,8 @@ class Game(object):
 		return s1
 
 if __name__=='__main__':
+
 	g = Game(mode='ai')
 	g.gameLoop()
+	# print(linearConflict(g.board))
+# 12783 7450

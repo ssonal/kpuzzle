@@ -17,7 +17,7 @@ def manhattanDistance(board):
 	return score
 
 
-def misplaced(board):
+def hammingDistance(board):
 	score = 0
 	size = board.getSize()
 
@@ -37,6 +37,23 @@ def misplaced(board):
 
 	return score
 
+
+def linearConflict(board):
+	size = board.getSize()
+	lc = 0
+	for i in range(size):
+
+		cells = [board.getCell(i,x) for x in range(size)]
+		dest = [(tile,(tile-1)%size) for tile in cells if (tile-1)/size == i]
+
+		for m in range(len(dest)):
+			for n in range(len(dest)):
+				if dest[m][1] > dest[n][1] and dest[m][0]<dest[n][0]:
+					lc += 5
+
+	if lc > 0:
+		print '1'
+	return lc
 class PriorityQueue:
     def  __init__(self):
         self.heap = []
