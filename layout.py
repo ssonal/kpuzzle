@@ -29,6 +29,9 @@ class Board(object):
 			self.dict = deepcopy(other.__dict__)
 
 
+	def getSize(self):
+		return self.size
+
 	#Initialization funtion. Creates a new k-puzzle board randomly
 	def getNewBoard(self):
 		nums = range(1,self.size**2)
@@ -54,7 +57,10 @@ class Board(object):
 
 	def shuffle(self, nums):
 		for i in range(self.size**2):
-			ul = (self.size**2)-1
+
+
+
+			ul = min(i+3,(self.size**2)-1)
 
 			r = randint(i,ul)
 			temp = nums[i]
@@ -82,38 +88,45 @@ class Board(object):
 			if board[i] == 0:
 				continue
 			else:
-				print(board[i])
 				m = [board[x] for x in range(i+1, (self.size**2)) if ((board[x] < board[i]) and (not board[x] == 0))]
-				# print(m)
 				inv += len(m)
 
-		print(inv)
 
 		oddWidth = self.size % 2 == 1
 		evenInv = inv % 2 == 0
 		space = [(x,y) for x,y in enumerate(board) if y == 0][0][0]
-		# print("S "+str(space))
 		space = space / self.size
-		# print (space)
 		blankOnOddRow = (self.size-space) % 2 == 1
-		# print(blankOnOddRow)
 		return (oddWidth and evenInv) or (not oddWidth and (blankOnOddRow == evenInv))
-
 
 
 	def makeMove(self,dire):
 		direction = self.__dirs.get(dire)
-		# print (self.space)
-		# print (direction)
 		if self.valid(*direction):
 			direction = (self.space[0]+direction[0],self.space[1]+direction[1])
-			# print (direction) 
 			self.board[self.space] = self.board[direction]
 			self.board[direction] = 0
 			self.space = direction
 			return True
 
 		return False
+
+
+	def getMoves(self):
+		moves = [72,80,77,75]
+
+		for move in moves:
+			if not self.valid(*self.__dirs.get(move)):
+				moves.remove(move)
+
+		return moves
+
+
+	def getCell(self, i, j):
+		return self.board[i,j]
+
+	def getSoln(self):
+		return self.solution
 
 	def won(self):
 		return self.board == self.solution
@@ -134,10 +147,12 @@ class Board(object):
 		for i in range(self.size):
 			for j in range(self.size):
 				st +='%2d'%self.board[i,j] + ' '
-				# print (st)
 			st += ('\n')
 
 		print (st)
+
+	def setBoard(self,b):
+		self.board = b
 
 
 	#Overloaded function. Allows printing of objects of class type Board

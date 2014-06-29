@@ -7,7 +7,7 @@ from game import Game
 
 
 
-def parse_cli_args():
+def parsed_args():
 	parser = argparse.ArgumentParser(description='Kpuzzle in your terminal')
 
 	parser.add_argument('--size', dest='size', type=int,
@@ -21,7 +21,7 @@ def parse_cli_args():
 
 def start_game():
 
-	args = parse_cli_args()
+	args = parsed_args()
 
 	Game(**args).gameLoop()
 
