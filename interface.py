@@ -16,7 +16,7 @@ def parsed_args():
 	parser.add_argument('--mode', dest='mode', type=str,
 						default='ai', help='user/AI')
 
-	parser.add_argument('--shuffle', dest='-count',type=int,
+	parser.add_argument('--shuffle', dest='count',type=int,
 						default=80,help='Indicate degree of difficulty of board')
 
 	return vars(parser.parse_args())

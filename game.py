@@ -50,7 +50,7 @@ class Game(object):
 					if self.board.makeMove(m):
 						self.score += 1
 
-			except TypeError:
+			except KeyboardInterrupt:
 				return 0
 
 	        print('You won!' if self.board.won() else 'Game Over')
@@ -72,15 +72,16 @@ class Game(object):
 		print ("Game solved!\nTime taken:%fs\nMoves to solution: %2d" %(stop-start,len(moves)))
 		print ("Solution:"+m1)
 
+		a=raw_input("Go through solution? Y=yes N=no ")
+		if a == 'Y' or a == 'y':
+			for move in moves:
+				self.board.makeMove(move)
 
-		for move in moves:
-			self.board.makeMove(move)
+				self.score += 1
+				print(self)
+				raw_input('Press any key to continue')
 
-			self.score += 1
-			print(self)
-			raw_input('Press any key to continue')
-
-		print ('You won!')
+			print ('You won!')
 
 	def astar(self,puzzle,heuristic=True):
 		counter = 0
@@ -90,12 +91,10 @@ class Game(object):
 			currentmoves = []
 			parentBoard = None
 			while True:
-				# print(puzzle)
 				if puzzle.won():
 					print ("Number of nodes expanded: %d"%counter)
 					return currentmoves
 				else:
-					# print (priority)
 					moves = puzzle.getMoves()
 
 					for move in moves:
@@ -116,20 +115,14 @@ class Game(object):
 					puzzle = b
 					currentmoves = m
 
-					# priority = p
-
-					# raw_input(' ')
-
 		except KeyboardInterrupt:
 			print(counter)
 
 	def __str__(self):
-		s1 = '\n\n\n'+str(self.board)+'\nScore:'+str(self.score)+'\n'
+		s1 = '\n\n\n'+str(self.board)+'\nMOVES:'+str(self.score)+'\n'
 		return s1
 
 if __name__=='__main__':
 
 	g = Game(mode='ai')
 	g.gameLoop()
-	# print(linearConflict(g.board))
-# 12783 7450
