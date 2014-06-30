@@ -11,13 +11,13 @@ def parsed_args():
 	parser = argparse.ArgumentParser(description='Kpuzzle in your terminal')
 
 	parser.add_argument('--size', dest='size', type=int,
-                        default=3, help='size of board')
+                        default=4, help='size of board')
 
 	parser.add_argument('--mode', dest='mode', type=str,
-						default='user', help='user/AI')
+						default='ai', help='user/AI')
 
 	parser.add_argument('--shuffle', dest='-count',type=int,
-						default=15,help='Indicate degree of difficulty of board')
+						default=80,help='Indicate degree of difficulty of board')
 
 	return vars(parser.parse_args())
 

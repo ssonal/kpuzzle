@@ -5,10 +5,11 @@ from __future__ import print_function
 import os
 import os.path
 import copy
+import timeit
+
 from layout import Board
 from util import *
 import keypress
-
 
 class Game(object):
 
@@ -56,64 +57,71 @@ class Game(object):
 	        return self.score
 
 	def ai(self):
-		try:
+		if self.clear_screen:
+				os.system(Game.__clear)
+		else:
+			print('\n')
+
+		print(self)
+		m = {72:"UP ",80:"DOWN ",77:"RIGHT ",75:"LEFT "}
+		start = timeit.default_timer()
+		moves = self.astar(copy.deepcopy(self.board))
+		stop = timeit.default_timer()
+		m1 = ''.join([m[x] for x in moves])
 		
-			if self.clear_screen:
-					os.system(Game.__clear)
-			else:
-				print('\n')
+		print ("Game solved!\nTime taken:%fs\nMoves to solution: %2d" %(stop-start,len(moves)))
+		print ("Solution:"+m1)
 
+
+		for move in moves:
+			self.board.makeMove(move)
+
+			self.score += 1
 			print(self)
-			moves = self.astar(copy.deepcopy(self.board))
-			print (moves)
-			print (len(moves))
-
-			for move in moves:
-				self.board.makeMove(move)
-
-				self.score += 1
-				print(self)
-				raw_input(' ')
-		except TypeError:
-			return 0
+			raw_input('Press any key to continue')
 
 		print ('You won!')
 
-	def astar(self,puzzle):
-		queue = PriorityQueue()
-		priority = 0
-		currentmoves = []
+	def astar(self,puzzle,heuristic=True):
 		counter = 0
-		parentBoard = None
-		while True:
-			# print(puzzle)
-			if puzzle.won():
-				print (counter)
-				return currentmoves
-			else:
-				# print (priority)
-				moves = puzzle.getMoves()
+		try:
+			queue = PriorityQueue()
+			priority = 0
+			currentmoves = []
+			parentBoard = None
+			while True:
+				# print(puzzle)
+				if puzzle.won():
+					print ("Number of nodes expanded: %d"%counter)
+					return currentmoves
+				else:
+					# print (priority)
+					moves = puzzle.getMoves()
 
-				for move in moves:
-					p1 = copy.deepcopy(puzzle)
-					c = copy.deepcopy(currentmoves)
-					p1.makeMove(move)
-					if p1.board == parentBoard:
-						continue
-					c.append(move)
-					p = len(currentmoves)
-					p += manhattanDistance(p1)+hammingDistance(p1)#linearConflict(p1)
-					queue.push((p1,c,p),p)
+					for move in moves:
+						p1 = copy.deepcopy(puzzle)
+						c = copy.deepcopy(currentmoves)
+						p1.makeMove(move)
+						if p1.board == parentBoard:
+							continue
+						c.append(move)
+						p = len(currentmoves)
+						if heuristic:
+							p += manhattanDistance(p1)+hammingDistance(p1)#linearConflict(p1)
+						queue.push((p1,c),p)
 
-				counter += 1
-				parentBoard = copy.deepcopy(puzzle.board)
-				b,m,p = queue.pop()
-				puzzle = b
-				currentmoves = m
+					counter += 1
+					parentBoard = copy.deepcopy(puzzle.board)
+					b,m = queue.pop()
+					puzzle = b
+					currentmoves = m
 
-				priority = p
+					# priority = p
 
-				# raw_input(' ')
+					# raw_input(' ')
+
+		except KeyboardInterrupt:
+			print(counter)
 
 	def __str__(self):
 		s1 = '\n\n\n'+str(self.board)+'\nScore:'+str(self.score)+'\n'

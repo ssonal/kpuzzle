@@ -3,7 +3,7 @@ from random import randint,sample,seed
 from copy import deepcopy
 import keypress
 
-# seed(10299)
+# seed(102)
 
 class Board(object):
 
